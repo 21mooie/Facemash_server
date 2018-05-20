@@ -38,7 +38,7 @@ app.post('/login', async (req,res) => {
     var user = await User.findOne({email: userData.email})
 
     if (!user)
-        return res.sendStatus(401).send({message: "Email or Password invalid"})
+        return res.status(401).send({message: "Email or Password invalid"})
 
     if (userData.pwd != user.pwd)
         return res.status(401).send({message: "Email or Password invalid"})    
