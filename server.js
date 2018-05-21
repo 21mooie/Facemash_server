@@ -4,6 +4,7 @@ var cors = require('cors');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var jwt = require('jwt-simple');
+var bcrypt = require('bcrypt-nodejs');
 
 var User = require('./models/User.js');
 
@@ -45,36 +46,42 @@ app.get('/profile/:id', async (req,res) => {
 });
 
 app.post('/register', (req,res) => {
-    var userData = req.body;
+    var loginData = req.body;
 
-    var user = new User(userData);
+    var user = new User(loginData);
     user.save((err,result) => {
         if(err){
             console.log('saving user error');
         }
         res.sendStatus(200);    
     })
-    //console.log(userData.email);
+    //console.log(loginData.email);
     
 });
 
 app.post('/login', async (req,res) => {
-    var userData = req.body;
+    var loginData = req.body;
 
-    var user = await User.findOne({email: userData.email})
+    var user = await User.findOne({email: loginData.email})
 
     if (!user)
-        return res.status(401).send({message: "Email or Password invalid"})
+        return res.status(401).send({message: "Email invalid"})
 
-    if (userData.pwd != user.pwd)
-        return res.status(401).send({message: "Email or Password invalid"})    
+    bcrypt.compare(loginData.pwd, user.pwd, (err, isMatch) => {
+        if (!isMatch)
+            return res.status(401).send({message: "Email or Password invalid"})    
     
-    var payload = {};
+        var payload = {};
     
-    var token = jwt.encode(payload, '123');
-    console.log(token)
+        var token = jwt.encode(payload, '123');
+        console.log(token)
 
-    res.status(200).send({token})
+        res.status(200).send({token})    
+    })
+
+        
+    
+    
 });
 
 mongoose.connect('mongodb://test:test@ds115768.mlab.com:15768/face_smash', (err) => {
