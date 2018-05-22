@@ -24,7 +24,9 @@ app.get('/posts', (req,res) => {
 });
 
 app.post('/post', (req,res) => {
-    var post = new Post(req.body);
+    var postData = req.body;
+    postData.author = '5b02195470c6aa322d843d39'
+    var post = new Post(postData);
 
     post.save((err,result) => {
         if(err){
