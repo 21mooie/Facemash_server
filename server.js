@@ -68,4 +68,4 @@ mongoose.connect('mongodb://test:test@ds115768.mlab.com:15768/face_smash', (err)
 
 app.use('/auth', auth.router)
 
-app.listen(3000);
+app.listen(process.env.port || 3000);
